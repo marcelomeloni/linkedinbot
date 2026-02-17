@@ -6,7 +6,9 @@ dotenv.config();
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const baseContext = JSON.parse(fs.readFileSync('./context.json', 'utf-8'));
-
+const today = new Date().toLocaleDateString('pt-BR', { 
+    day: '2-digit', month: '2-digit', year: 'numeric' 
+});
 // Extrai JSON mesmo quando o modelo suja a resposta
 const extractJSON = (raw) => {
     let clean = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -42,6 +44,7 @@ Isso inclui temas tangenciais. Se o tema novo tiver qualquer sobreposição com 
 
         const prompt = `
 ${JSON.stringify(baseContext, null, 2)}
+DATA DE HOJE: ${today} — use isso como referência obrigatória para o tipo "Notícia". Apenas notícias dos últimos 7 dias são válidas. Se não encontrar nada relevante nesse intervalo, amplie para 30 dias. Nunca use notícia sem verificar se a data é compatível com a data de hoje informada acima.
 
 ---
 TIPO DE POST: ${currentTypeContext.name}
